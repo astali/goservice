@@ -6,5 +6,5 @@ type AuthController struct {
 
 func (self *AuthController) Index() {
 	self.Data["pageTitle"] = "权限因子"
-	//	self.display()
+	self.display()
 }

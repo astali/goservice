@@ -8,6 +8,7 @@
 package controllers
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -161,6 +162,7 @@ func (self *BaseController) display(tpl ...string) {
 	} else {
 		tplname = self.controllerName + "/" + self.actionName + ".html"
 	}
+	fmt.Println("######display Method:tpl", tpl, "tplname", tplname)
 	self.Layout = "public/layout.html"
 	self.TplName = tplname
 }

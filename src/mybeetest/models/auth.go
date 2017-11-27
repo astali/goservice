@@ -1,8 +1,6 @@
 package models
 
 import (
-	"fmt"
-
 	"github.com/astaxie/beego/orm"
 )
 
@@ -30,7 +28,6 @@ func AuthGetList(page, pageSize int, filters ...interface{}) ([]*Auth, int64) {
 	offset := (page - 1) * pageSize
 	list := make([]*Auth, 0)
 	query := orm.NewOrm().QueryTable(TableName("uc_auth"))
-	fmt.Println("---->>query:", query)
 	if len(filters) > 0 {
 		l := len(filters)
 		for k := 0; k < l; k += 2 {

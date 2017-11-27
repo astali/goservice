@@ -9,6 +9,7 @@
 package models
 
 import (
+	"fmt"
 	"net/url"
 
 	"github.com/astaxie/beego"
@@ -27,7 +28,7 @@ func Init() {
 		dbport = "3306"
 	}
 	dsn := dbuser + ":" + dbpassword + "@tcp(" + dbhost + ":" + dbport + ")/" + dbname + "?charset=utf8"
-	// fmt.Println(dsn)
+	fmt.Println("dsn-", dsn)
 
 	if timezone != "" {
 		//	QueryEscape函数对s进行转码使之可以安全的用在URL查询里。

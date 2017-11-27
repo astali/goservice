@@ -1,6 +1,8 @@
 package controllers
 
 import (
+	"fmt"
+	"log"
 	"mybeetest/models"
 	"strconv"
 	"strings"
@@ -31,6 +33,7 @@ type BaseController struct {
 func (self *BaseController) Prepare() {
 	self.pageSize = 20
 	controllerName, actionName := self.GetControllerAndAction()
+	fmt.Println("###cName:", controllerName, "aName:", actionName)
 	self.controllerName = strings.ToLower(controllerName[0 : len(controllerName)-10])
 	self.actionName = strings.ToLower(actionName)
 	self.Data["version"] = beego.AppConfig.String("version")
@@ -45,7 +48,7 @@ func (self *BaseController) Prepare() {
 
 //登录权限验证
 func (self *BaseController) auth() {
-	arr := strings.Split(self.Ctx.GetCookie("auth"), "|")
+	arr := strings.Split(self.Ctx.GetCookie("authT"), "|")
 	self.userId = 0
 	if len(arr) == 2 {
 		idstr, password := arr[0], arr[1]
@@ -59,6 +62,7 @@ func (self *BaseController) auth() {
 				self.user = user
 			}
 			self.AdminAuth()
+
 			isHasAuth := strings.Contains(self.allowUrl, self.controllerName+"/"+self.actionName)
 			noAuth := "ajaxsave/ajaxdel/table/loginin/loginout/getnodes/start/show/ajaxapisave"
 			isNoAuth := strings.Contains(noAuth, self.actionName)
@@ -78,6 +82,7 @@ func (self *BaseController) AdminAuth() {
 	filters := make([]interface{}, 0)
 	filters = append(filters, "status", 1)
 	if self.userId != 1 {
+		log.Println("---------------------i---")
 		//普通管理员
 		//		adminAuthIds ,_:= models.Role
 	}
@@ -141,5 +146,29 @@ func (self *BaseController) ajaxMsg(msg interface{}, msgno int) {
 //重定向
 func (self *BaseController) redirect(url string) {
 	self.Redirect(url, 302)
+	self.StopRun()
+}
+
+//加载模板
+func (self *BaseController) display(tpl ...string) {
+	var tplname string
+	if len(tpl) > 0 {
+		tplname = strings.Join([]string{tpl[0], "html"}, ".")
+	} else {
+		tplname = self.controllerName + "/" + self.actionName + ".html"
+	}
+	self.Layout = "public/layout.html"
+	self.TplName = tplname
+}
+
+//ajax返回 列表
+func (self *BaseController) ajaxList(msg interface{}, msgno int, count int64, data interface{}) {
+	out := make(map[string]interface{})
+	out["code"] = msgno
+	out["msg"] = msg
+	out["count"] = count
+	out["data"] = data
+	self.Data["json"] = out
+	self.ServeJSON()
 	self.StopRun()
 }
